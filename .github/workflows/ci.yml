@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Weekly drift check: re-runs the self-healing guards against the newest
+    # world-countries release so an upstream fix is noticed even with no code
+    # changes here. A guard that is no longer needed turns this job red.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      # Always validate corrections against the newest upstream data, so the
+      # guarded tests reflect what consumers who update will actually get.
+      - name: Pull newest world-countries for the drift check
+        run: npm install --no-save world-countries@latest
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build

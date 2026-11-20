@@ -1,0 +1,66 @@
+{
+	"name": "@deutschemodelunitednations/world-countries",
+	"version": "0.1.0",
+	"description": "Drop-in replacement for world-countries with self-healing data corrections maintained by DMUN e.V. Keeps world-countries as a peer dependency, so upstream data updates flow through without a new release of this wrapper.",
+	"keywords": [
+		"world-countries",
+		"countries",
+		"iso-3166",
+		"i18n",
+		"translations",
+		"eswatini",
+		"dmun",
+		"munify"
+	],
+	"license": "MIT",
+	"author": "Deutsche Model United Nations e.V.",
+	"homepage": "https://github.com/DeutscheModelUnitedNations/world-countries#readme",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/DeutscheModelUnitedNations/world-countries.git"
+	},
+	"bugs": {
+		"url": "https://github.com/DeutscheModelUnitedNations/world-countries/issues"
+	},
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./corrections": {
+			"types": "./dist/corrections.d.ts",
+			"import": "./dist/corrections.js"
+		}
+	},
+	"main": "./dist/index.js",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"sideEffects": false,
+	"files": [
+		"dist",
+		"!dist/**/*.test.*"
+	],
+	"engines": {
+		"node": ">=18"
+	},
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"prepack": "npm run build"
+	},
+	"peerDependencies": {
+		"world-countries": ">=5"
+	},
+	"devDependencies": {
+		"@types/node": "^20.14.0",
+		"typescript": "^5.6.0",
+		"vitest": "^2.1.0",
+		"world-countries": "^5.1.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}
