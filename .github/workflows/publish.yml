@@ -16,19 +16,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # NOTE: intentionally NO `registry-url` here. registry-url makes setup-node
+      # write an .npmrc with `_authToken=${NODE_AUTH_TOKEN}`, and that token path
+      # suppresses OIDC (npm then does a tokenless/invalid publish → misleading
+      # E404 on scoped packages). Pure OIDC needs no .npmrc and no NODE_AUTH_TOKEN.
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: 'https://registry.npmjs.org'
-      # Trusted publishing needs npm >= 11.5.0. Pin to npm@11 rather than @latest:
-      # npm@latest (12.x) requires Node >= 22.22.2 and breaks on older runners,
-      # whereas npm@11 covers the OIDC flow and stays broadly Node-compatible.
-      # Do NOT set NODE_AUTH_TOKEN anywhere — its absence is what makes npm use OIDC.
+      # Trusted publishing needs npm >= 11.5.0; the runner's bundled npm is older.
       - name: Upgrade npm for trusted publishing
         run: npm install -g npm@11
+      - name: Show toolchain versions
+        run: node -v && npm -v && npm config get registry
       - run: npm install
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
-      # Provenance is attached automatically under trusted publishing.
-      - run: npm publish
+      # --provenance forces the OIDC-backed provenance path; if OIDC is not
+      # available this fails with a clear error instead of silently falling back.
+      - run: npm publish --provenance
