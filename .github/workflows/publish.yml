@@ -3,10 +3,11 @@ name: Publish
 # Publishes to npm via trusted publishing (OIDC) — no NPM_TOKEN secret.
 # Trigger: push a version tag, e.g. `npm version patch && git push --follow-tags`.
 #
-# registry-url is REQUIRED here: it configures the npmjs registry so npm engages
-# the OIDC trusted-publishing flow. Do NOT set NODE_AUTH_TOKEN — leaving it unset
-# is what makes npm use OIDC instead of a token. The npm-side trusted publisher
-# (owner/repo/workflow=publish.yml, environment empty) must match this workflow.
+# registry-url + scope configure the npmjs registry so npm engages the OIDC
+# trusted-publishing flow for the scoped package. Do NOT set NODE_AUTH_TOKEN —
+# leaving it unset is what makes npm use OIDC. The npm-side trusted publisher
+# (owner=DeutscheModelUnitedNations, repo=world-countries, workflow=publish.yml,
+# environment EMPTY) must exactly match this workflow or npm returns 403/404.
 on:
   push:
     tags: ['v*']
@@ -25,6 +26,7 @@ jobs:
         with:
           node-version: 22
           registry-url: 'https://registry.npmjs.org'
+          scope: '@deutschemodelunitednations'
       # Trusted publishing needs npm >= 11.5.0; the runner's bundled npm is older.
       - name: Upgrade npm for trusted publishing
         run: npm install -g npm@11
