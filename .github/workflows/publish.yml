@@ -1,0 +1,32 @@
+name: Publish
+
+# Publishes to npm via trusted publishing (OIDC) — no NPM_TOKEN secret.
+# Trigger: push a version tag, e.g. `npm version patch && git push --follow-tags`.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # REQUIRED: lets the runner mint the OIDC token npm exchanges
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+      # Trusted publishing needs npm >= 11.5.0; the runner's bundled npm is older.
+      # Do NOT set NODE_AUTH_TOKEN anywhere — its absence is what makes npm use OIDC.
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
+      - run: npm install
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      # Provenance is attached automatically under trusted publishing.
+      - run: npm publish
