@@ -1,6 +1,6 @@
 {
 	"name": "@deutschemodelunitednations/world-countries",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "Drop-in replacement for world-countries with self-healing data corrections maintained by DMUN e.V. Keeps world-countries as a peer dependency, so upstream data updates flow through without a new release of this wrapper.",
 	"keywords": [
 		"world-countries",
